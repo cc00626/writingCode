@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .parent {
+        width: 800px;
+        height: 800px;
+        background-color: red;
+        margin-right: 100px;
+        position: relative;
+      }
+
+      .child {
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        background-color: blue;
+        left:0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        /* margin: auto; */
+        /* transform: translate(-50%, -50%); */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="parent">
+      <div class="child"></div>
+    </div>
+  </body>
+</html>
+.clearfix:after{
+  //相当于设置一个块级伪元素
+  content: "";
+  display: block;
+  height: 0;
+  //设置clear: both
+  clear: both;
+  visibility: hidden;
+}
