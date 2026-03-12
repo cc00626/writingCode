@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+  <body>
+    <ul>
+      <li><a href="/" data-link>11111</a></li>
+      <li><a href="/admin" data-link>22222</a></li>
+      <li><a href="/server" data-link>33333</a></li>
+    </ul>
+
+    <div id="div">展示</div>
+
+    <script>
+      function Router() {
+        this.routes = {};
+        this.currentUrl = "";
+      }
+
+      Router.prototype.route = function (path, callback) {
+        this.routes[path] = callback || function () {};
+      };
+
+      Router.prototype.refresh = function () {
+        this.currentUrl = location.pathname;
+        this.routes[this.currentUrl] && this.routes[this.currentUrl]();
+      };
+
+      Router.prototype.push = function (path) {
+        history.pushState({}, "", path);
+        this.refresh();
+      };
+
+      Router.prototype.init = function () {
+        window.addEventListener("load", this.refresh.bind(this));
+        window.addEventListener("popstate", this.refresh.bind(this));
+
+        document.body.addEventListener("click", (e) => {
+          if (e.target.matches("[data-link]")) {
+            e.preventDefault();
+            this.push(e.target.getAttribute("href"));
+          }
+        });
+      };
+
+      const div = document.getElementById("div");
+      const router = new Router();
+
+      router.init();
+
+      router.route("/", () => {
+        div.style.background = "pink";
+        div.innerHTML = "11111";
+      });
+
+      router.route("/admin", () => {
+        div.style.background = "blue";
+        div.innerHTML = "22222";
+      });
+
+      router.route("/server", () => {
+        div.style.background = "green";
+        div.innerHTML = "33333";
+      });
+    </script>
+  </body>
+</html>

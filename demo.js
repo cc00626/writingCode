@@ -1,36 +1,33 @@
-class LazyMan {
-  constructor(name) {
-    this.name = name;
-    this.queue = [];
-    this.sayName();
-    this.run();
+const vdom = {
+  tag: "DIV",
+  attrs: { id: "app" },
+  children: [
+    {
+      tag: "SPAN",
+      children: [{ tag: "A", children: [] }],
+    },
+    {
+      tag: "SPAN",
+      children: [
+        { tag: "A", children: [] },
+        { tag: "A", children: [] },
+      ],
+    },
+  ],
+};
+
+function JSONToDom(vdom) {
+  const root = document.createElement(vdom.tag.toLowerCase());
+  if (vnode.attrs) {
+    for (let key in vnode.attrs) {
+      el.setAttribute(key, vnode.attrs[key]);
+    }
+  }
+  if (vdom.children) {
+    for (const item of vdom.children) {
+      root.appendChild(JSONToDom(vdom));
+    }
   }
 
-  sayName() {
-    this.queue.push(() => {
-      console.log(this.name);
-    });
-    return this;
-  }
-
-  sleep() {
-    this.queue.push(() => this.timeWait(time));
-    return this;
-  }
-
-  timeWait(time) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, time);
-    });
-  }
-
-  run() {
-    setTimeout(async () => {
-      for (const fn of this.queue) {
-        await fn();
-      }
-    }, 0);
-  }
+  return root;
 }
