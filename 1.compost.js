@@ -13,10 +13,13 @@ function fn4(x) {
 const a = compose(fn1, fn2, fn3, fn4);
 console.log(a(1)); // 1+4+3+2+1=11
 
-function compose(...fns){
-    return fns.reduce((result,it) => {
-        return (...args) => {
-            return result(it(...args))
-        }
-    },(it)=>it)
+function compose(...fns) {
+  return fns.reduce(
+    (result, it) => {
+      return (...args) => {
+        return result(it(...args));
+      };
+    },
+    (it) => it,
+  );
 }
