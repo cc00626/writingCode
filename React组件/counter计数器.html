@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const handleChange = (e) => {
+      const value = parseInt(e.target.value) || 0;
+      setCount(Math.max(value, 0));
+    };
+    function Counter() {
+      const [count, setCount] = useState(0);
+      useEffect(() => {
+        if (count < 0) return;
+        const timer = setTimeout(() => setCount((c) => c - 1), 1000);
+        return () => clearTimeout(timer);
+      }, count);
+      return (
+        <div className="max-w-md mx-auto p-6 flex items-center gap-2">
+          {/* flex + gap：横向排列 + 间距 */}
+
+          <input
+            type="number"
+            value={count}
+            onChange={handleChange}
+            className="w-20 px-2 py-1 border rounded text-center"
+          />
+          {/* w-20：固定宽度，text-center：数字居中 */}
+          <button
+            onClick={() => setCount((c) => c + 1)}
+            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 active:scale-95"
+          >
+            +
+          </button>
+          {/* active:scale-95：点击时缩小，有反馈感 */}
+          <button
+            onClick={() => setCount((c) => Math.max(c - 1, 0))}
+            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 active:scale-95"
+          >
+            -
+          </button>
+
+          <button
+            onClick={() => setCount(0)}
+            className="px-3 py-1 text-red-500 hover:text-red-600"
+          >
+            重置
+          </button>
+          {/* 文字按钮，不需要背景 */}
+        </div>
+      );
+    }
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<Counter />);
+  </script>
+</html>

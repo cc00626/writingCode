@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>倒计时组件</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+
+      function CountDown({ initial = 10 }) {
+        const [count, setCount] = useState(initial);
+
+        useEffect(() => {
+          // 如果倒计时结束，不再设置定时器
+          if (count <= 0) return;
+
+          const timer = setTimeout(() => {
+            setCount((c) => c - 1);
+          }, 1000);
+
+          // 清除函数：防止组件卸载或连续触发导致的定时器堆积
+          return () => clearTimeout(timer);
+        }, [count]); // 当 count 变化时，重新跑一次逻辑
+
+        const reset = () => setCount(initial);
+
+        return (
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="flex items-center gap-2 p-6">
+              <span className="w-20 px-2 py-1 border rounded text-center font-mono text-xl">
+                {count}
+              </span>
+              <button
+                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 active:scale-95 transition-transform"
+                onClick={reset}
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        );
+      }
+
+      // 2. 修正：添加渲染逻辑，挂载到 id="root" 的 div 上
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<CountDown initial={10} />);
+    </script>
+  </body>
+</html>

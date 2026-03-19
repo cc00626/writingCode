@@ -1,51 +1,50 @@
-//手写深拷贝
-const deepClone = (obj,map = new WeakMap())=>{
-	//处理特殊类型的数据
-	if(!obj || typeof obj !== 'object'){
-		return obj
-	}
-	if(obj instanceof Date) return new Date(obj)
-	if(obj instanceof RegExp) return new RegExp(obj)
-	if(obj instanceof Error) return new Error(obj.message)
-	
-	if(map.has(obj)){
-		return map.get(obj)
-	}
-	
-	const cloneTarget = Array.isArray(obj) ? [] : {};
-	map.set(obj, cloneTarget);
-	
-	for(const item in obj){
-		if(obj.hasOwnProperty(item)){
-			cloneTarget[item] = deepClone(obj[item],map)
-		}
-	}
-	
-	return cloneTarget
+// 写法四：完整版（处理特殊类型）
+function deepCloneFull(obj, cache = new WeakMap()) {
+  // 基本类型直接返回
+  if (obj === null || typeof obj !== 'object') return obj
+  // 函数直接返回（一般不需要拷贝）
+  if (typeof obj === 'function') return obj
+  // 循环引用检查
+  if (cache.has(obj)) return cache.get(obj)
+  
+  // 特殊类型处理
+  if (obj instanceof Date) return new Date(obj.getTime())
+  if (obj instanceof RegExp) return new RegExp(obj.source, obj.flags)
+  
+  if (obj instanceof Map) {
+    const result = new Map()
+    cache.set(obj, result)
+    obj.forEach((v, k) => result.set(deepCloneFull(k, cache), deepCloneFull(v, cache)))
+    return result
+  }
+  
+  if (obj instanceof Set) {
+    const result = new Set()
+    cache.set(obj, result)
+    obj.forEach(v => result.add(deepCloneFull(v, cache)))
+    return result
+  }
+  
+  const result = Array.isArray(obj) ? [] : {}
+  cache.set(obj, result)
+  
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      result[key] = deepCloneFull(obj[key], cache)
+    }
+  }
+  return result
 }
-const testObj = {
-    // 1. 基础类型
-    num: 100,
-    str: "Hello Gemini",
-    bool: true,
-    un: undefined,
-    nul: null,
-    
-    // 2. 嵌套对象与数组
-    obj: {
-        name: "child",
-        list: [1, 2, { a: 'nested' }]
-    },
-    
-    // 3. 特殊对象
-    date: new Date("2026-03-16"),
-    reg: /^\d+$/gi,
-    err: new Error("Oops! Something went wrong"),
-    
-    // 4. 函数（函数通常保持引用，不深拷贝）
-    sayHi: function() { console.log("Hi!"); }
-};
 
-console.log(deepClone(testObj))
-testObj.num = 101
-console.log(testObj)
+// 测试
+const obj = { a: 1, b: { c: 2 }, d: [1, 2, { e: 3 }], fn: () => 'hello' }
+const cloned = deepCloneFull(obj)
+cloned.b.c = 999
+console.log(obj.b.c) // 2（原对象不受影响）
+console.log(cloned.fn()) // 'hello'
+
+// 测试循环引用
+const circular = { a: 1 }
+circular.self = circular
+const clonedCircular = deepCloneWithCache(circular)
+console.log(clonedCircular.self === clonedCircular) // true
