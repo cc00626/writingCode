@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>倒计时组件</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect, useRef, useCallback } = React;
+
+      //防抖值
+      function useDebounce(value, time) {
+        const [debounceValue, setDebounceValue] = useState(value);
+
+        useEffect(() => {
+          const timer = setTimeout(() => setDebouncedValue(value), delay);
+          return () => clearTimeout(timer);
+        }, [value, delay]);
+
+        return debouncedValue;
+      }
+
+      //防抖函数
+      function useDebounceFn(fn, delay) {
+        const timerRef = useRef(null);
+        const debounceFn = useCallback(
+          (...args) => {
+            if (timerRef.current) clearTimeout(timerRef.current);
+            timerRef.current = setTimeout(() => fn(...args), delay);
+          },
+          [fn, delay],
+        );
+
+        return useEffect(() => {
+          return () => {
+            if (timerRef.current) clearTimeout(timerRef.current);
+          };
+        }, []);
+
+        return debouncedFn;
+      }
+      // 2. 修正：添加渲染逻辑，挂载到 id="root" 的 div 上
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+    </script>
+  </body>
+</html>
