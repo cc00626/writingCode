@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>倒计时组件</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect, useRef, useCallback } = React;
+
+      //节流值
+      const useThrottleFn = (fn, delay) => {
+        // 1. 使用 Ref 保存最新的函数，防止闭包陷阱
+        const fnRef = useRef(fn);
+        fnRef.current = fn;
+
+        // 2. 记录上一次执行的时间点
+        const lastTimeRef = useRef(0);
+
+        // 3. 使用 useCallback 保证返回的函数引用不变
+        const throttledFn = useCallback(
+          (...args) => {
+            const now = Date.now();
+            if (now - lastTimeRef.current >= delay) {
+              fnRef.current(...args); // 执行最新的函数
+              lastTimeRef.current = now; // 更新时间
+            }
+          },
+          [delay],
+        );
+
+        return throttledFn;
+      };
+
+      //节流值
+      const throttle = (value, delay) => {
+        const [throttleValue, setThrottleValue] = useState(value);
+        const lastTimeRef = useRef(Date.now());
+        useEffect(() => {
+          const now = Date.now();
+          if (now - lastTimeRef.current >= delay) {
+            setThrottleValue(value);
+            lastTimeRef = now;
+          } else {
+            const timer = setTimeout(
+              () => {
+                lastTimeRef.current = Date.now();
+                setThrottledValue(value);
+              },
+              delay - (now - lastTimeRef.current),
+            );
+
+            return () => {
+              return clearTimeout(timer);
+            };
+          }
+        }, []);
+      };
+      // 2. 修正：添加渲染逻辑，挂载到 id="root" 的 div 上
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+    </script>
+  </body>
+</html>
