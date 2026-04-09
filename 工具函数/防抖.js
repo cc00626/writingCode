@@ -10,22 +10,21 @@ function debounce(fn, time) {
 }
 
 //立即执行版本
-function debounce2(fn, time, immediate) {
+function debounce(fn, delay, immediate = false) {
   let timer = null;
-  return function (...args) {
-    if (immediate && !timer) {
-      fn.call(this, ...args);
-    }
-    if (timer) {
-      clearTimeout(timer);
-      timer = null;
-    }
+  let isInvoke = false;
 
-    timer = setTimeout(() => {
-      if (!immediate) {
+  const _debounce = function (...args) {
+    if (timer) clearTimeout(timer);
+    if (immediate && !isInvoke) {
+      fn.apply(this, args);
+      isInvoke = true;
+    } else {
+      timer = setTimeout(() => {
         fn.call(this, ...args);
-      }
-      timer = null;
-    }, time);
+        isInvoke = false;
+      }, delay);
+    }
   };
+  return _debounce;
 }
