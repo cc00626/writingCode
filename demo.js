@@ -1,7 +1,8 @@
-function ListNode(val, next, key) {
+function ListNode(key, val) {
+  // 建议把 key 和 val 放在最前面
   this.key = key;
-  this.val = val ?? 0;
-  this.next = next ?? null;
+  this.val = val;
+  this.next = null;
   this.pre = null;
 }
 
@@ -9,8 +10,8 @@ class LRUCache {
   constructor(capacity) {
     this.capacity = capacity; //容量
     this.map = new Map();
-    this.head = new ListNode(0, null); //头节点
-    this.tail = new ListNode(0, null); //尾节点
+    this.head = new ListNode(0, 0); //头节点
+    this.tail = new ListNode(0, 0); //尾节点
     this.head.next = this.tail;
     this.tail.pre = this.head;
   }
@@ -43,6 +44,7 @@ class LRUCache {
       const node = this.map.get(key);
       //有，移动到头部，直接返回
       this.moveToHead(node);
+      return node.val;
     } else {
       //没有
       return -1;
@@ -51,10 +53,10 @@ class LRUCache {
   set(key, val) {
     if (this.map.has(key)) {
       const node = this.map.get(key);
-      node.val = value; // 更新值
-      this.moveToHead(node); // 刷新新鲜度，移动到头部
+      node.val = val; // 更新值
+      this.moveToHead(node); //移动到头部
     } else {
-      const newNode = new ListNode(key, value); // 注意：这里建议 ListNode 存 key 和 value
+      const newNode = new ListNode(key, val); // 注意：这里建议 ListNode 存 key 和 value
       this.map.set(key, newNode);
       this.addToHead(newNode);
 
